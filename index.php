@@ -44,7 +44,7 @@ include "backend/globalFunctions.php";
 
             } else {
                 echo '
-                <meta http-equiv="Refresh" content="0; url=/terminal" />
+                <meta http-equiv="Refresh" content="0; url=terminal" />
                 ';
             }
             ?>

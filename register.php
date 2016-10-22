@@ -57,7 +57,7 @@ $recaptcha = getReCaptcha();
 						echo '...';
 						doRegister($_POST['username'], $_POST['first'], $_POST['last'], $_POST['password'], $_POST['email'], $_POST['phone']);
                         doLogin($_POST['username'], $_POST['password']);
-						echo '<br />Done!<br />...<br />Now loading Assassin Terminal...<meta http-equiv="refresh" content="3; url=/terminal" />';
+						echo '<br />Done!<br />...<br />Now loading Assassin Terminal...<meta http-equiv="refresh" content="3; url=terminal" />';
 					}
 
 

@@ -51,7 +51,7 @@ $recaptcha = getReCaptcha();
                             echo 'Username or password incorrect!<br /><a href="login" class="btn btn-lg btn-default">Try Again</a>';
                         } else {
                             echo '...';
-                            echo '<br />Done!<br />...<br />Now loading Assassin Terminal...<meta http-equiv="refresh" content="3; url=/terminal" />';
+                            echo '<br />Done!<br />...<br />Now loading Assassin Terminal...<meta http-equiv="refresh" content="3; url=terminal" />';
                         }
                     } else {
                         $errors = $resp->getErrorCodes();
