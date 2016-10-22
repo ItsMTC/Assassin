@@ -38,7 +38,8 @@ $recaptcha = getReCaptcha();
                   <p class="lead">Fill out your assassin application below.</p>
                   <form name="reg" action="register" data-toggle="validator" method="post">
 					<input type="text" class="form-control" maxlength="20" required placeholder="Username" name="username" id="username" aria-describedby="username">
-					<input type="text" class="form-control" id="email" name="email" placeholder="example@website.com" required>
+					<input type="password" class="form-control" id="password" name="password" placeholder="" required>
+					<input type="email" class="form-control" id="email" name="email" placeholder="example@website.com" required>
 					<input type="text" class="form-control" id="first" name="first" placeholder="First Name" required maxlength="50">
 					<input type="text" class="form-control" id="last" name="last" placeholder="Last Name" required maxlength="50">
 					<input type="text" class="form-control" id="phone" name="phone" placeholder="5555555555" required maxlength="10">
