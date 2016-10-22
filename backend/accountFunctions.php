@@ -7,7 +7,7 @@ function validateAccount($username, $phone){
     if(!is_numeric($phone)){
         return false;
     }
-if(count(query("SELECT username FROM users WHERE username='".$username."' OR phone='".$phone."'")) > 0){
+if(mysqli_num_rows(query("SELECT username FROM users WHERE username='".$username."' OR phone='".$phone."'")) > 0){
 	return false;
 } else {
 	return true;
@@ -15,13 +15,20 @@ if(count(query("SELECT username FROM users WHERE username='".$username."' OR pho
 }
 
 function getPrettyUsername($username){
-	$username = SQLValue($username);
-	$res = query("SELECT username FROM users WHERE username='".$username."'");
-	if(mysqli_num_rows($res) > 0){
-		$row = mysqli_fetch_assoc($res);
-		return $row["username"];
-	}
-	return "";
+    $user = getUserRow($username);
+    if(!empty($user))
+        return $user["username"];
+    return $username;
+}
+
+function getUserRow($username){
+    $username = SQLValue($username);
+    $res = query("SELECT username FROM users WHERE username='".$username."'");
+    if(mysqli_num_rows($res) > 0){
+        $row = mysqli_fetch_assoc($res);
+        return $row;
+    }
+    return array();
 }
 
 function doRegister($username, $first, $last, $password, $phone, $carrier){
@@ -76,13 +83,10 @@ function getTargetRaw($token){
 }
 
 function getName($username){
-	$username = SQLValue($username);
-	$raw = query("SELECT first, last FROM users WHERE username='".$username."'");
-	if(mysqli_num_rows($raw) > 0){
-		$res = mysqli_fetch_assoc($raw);
-		return array($res["first"], $res["last"]);
-	}
-	return "";
+    $user = getUserRow($username);
+    if(!empty($user))
+        return array($user["first"], $user["last"]);
+    return array("NOT", "DEFINED");
 }
 
 function verifyToken($private){
@@ -129,7 +133,7 @@ function generateNewVerification($username){
 	$token = SQLValue(generateNum(5));
 	query("DELETE FROM verification WHERE username='".$username."'");
 	if(!verifyVerification($token)){
-		query("INSERT INTO verification (username, address, token) VALUES ('".$username."','','".$token."')");
+		query("INSERT INTO verification (username, address, token) VALUES ('".$username."','".getCommString($username)."','".$token."')");
 	} else {
 		return generateNewVerification($username);
 	}

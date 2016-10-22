@@ -57,25 +57,28 @@ function sendIDText($id, $text){
 }
 
 function sendRawText($number, $carrier, $text){
-    gmail($number.getCarrierString($carrier), $text);
+    //gmail($number.getCarrierString($carrier), $text);
 }
 
-function getCommString($id){
-
+function getCommString($username){
+    $user = getUserRow($username);
+    if(!empty($user))
+        return $user["phone"].getCarrierString($user["carrier"]);
+    return "";
 }
 
 function getCarrierString($carrier){
     switch ($carrier){
-        case "att":
+        case "AT&T":
             return "@txt.att.net";
             break;
-        case "verizon":
+        case "Verizon":
             return "@vtext.com";
             break;
-        case "tmobile":
+        case "T-Mobile":
             return "@tmomail.net";
             break;
-        case "sprint":
+        case "Sprint":
             return "@messaging.sprintpcs.com";
             break;
     }

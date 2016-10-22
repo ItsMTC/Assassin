@@ -46,7 +46,6 @@ $recaptcha = getReCaptcha();
 					<button class="btn btn-lg btn-default btn-block" type="submit">Login</button>
 				  </form>';
                 } else {
-                    $recaptcha = new \ReCaptcha\ReCaptcha($secret);
                     $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
                     if ($resp->isSuccess()) {
                         // good its not a bot and stuff now we go ahead and register them

@@ -1,0 +1,16 @@
+{
+  "name": "ItsMTC/Assassin",
+  "description": "Assassin game",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Evan Langlais",
+      "email": "evanlanglais@gmail.com"
+    }
+  ],
+  "require": {
+    "phpmailer/phpmailer": "v5.2.16",
+    "google/recaptcha": "1.1.2"
+  }
+}
