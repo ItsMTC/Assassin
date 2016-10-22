@@ -32,8 +32,8 @@ include "backend/globalFunctions.php";
               if(!isset($_SESSION["username"])){
 
               echo '
-              <h1 class="cover-heading">Welcome</h1>
-              <p class="lead">Grab Your Spoons</p>
+              <h1 class="cover-heading">Welcome to Assassin</h1>
+              <p class="lead">What would you like to do?</p>
               <p class="lead">
               <div class="row">
                   <a href="login" class="btn btn-lg btn-default">Login</a>
@@ -44,26 +44,7 @@ include "backend/globalFunctions.php";
 
             } else {
                 echo '
-                <h1 class="cover-heading">Welcome back, '.$_SESSION["firstname"].'</h1>
-                <hr />
-                <p class="lead">You have 1 target(s)</p>
-                <!--put targets here-->
-                <table width="100%" height="200px" border="1px" bordercolor="#00cc00"><tr><td><h2>Test Person</h2><p>From "CHS" squad</p></td><td>
-                <p>To mark as deceased,<br /> write private code and press "Deceased"</p>
-                <div class="row">
-                <input type="text" name="code" length="15" />
-                <a href="tag" class="btn btn-lg btn-default">Deceased</a>
-                </div>
-                </td></tr></table>
-                <hr />
-                <p class="lead">You are in 1 squad(s)</p>
-                <p class="lead">
-              <div class="row">
-                  <a href="join" class="btn btn-lg btn-default">Join Squad</a>
-                  <a href="register" class="btn btn-lg btn-default">Ranks</a>
-              </div>
-              </p>
-                
+                <meta http-equiv="Refresh" content="0; url=/terminal" />
                 ';
             }
             ?>

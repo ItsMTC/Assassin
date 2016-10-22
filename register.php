@@ -35,23 +35,14 @@ $recaptcha = getReCaptcha();
 			if(!isset($_POST['g-recaptcha-response'])){
 				echo '
                   <h3 class="cover-heading">You want to join?</h3>
-                  <p class="lead">Alright, fill out your assassin application below.</p>
+                  <p class="lead">Fill out your assassin application below.</p>
                   <form name="reg" action="register" data-toggle="validator" method="post">
-					<div class="input-group">
-						<span class="input-group-addon" id="username" name="username">@</span>
-						<input type="text" class="form-control" maxlength="20" required placeholder="Asset Tag" name="username" id="username" aria-describedby="username">
-					</div>
+					<input type="text" class="form-control" maxlength="20" required placeholder="Username" name="username" id="username" aria-describedby="username">
+					<input type="text" class="form-control" id="email" name="email" placeholder="example@website.com" required>
 					<input type="text" class="form-control" id="first" name="first" placeholder="First Name" required maxlength="50">
 					<input type="text" class="form-control" id="last" name="last" placeholder="Last Name" required maxlength="50">
-					<input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
 					<input type="text" class="form-control" id="phone" name="phone" placeholder="5555555555" required maxlength="10">
-            <select class="form-control" name="carrier">
-                <option value="AT&T">AT&T</option>
-                <option value="Verizon">Verizon</option>
-                <option value="Sprint">Sprint</option>
-                <option value="T-Mobile">T-Mobile</option>
-            </select>
-					<center><div class="g-recaptcha" data-sitekey="6LcnoQ0TAAAAAGWoOB8lbdMxh8FzDlB_mXCbF4xZ"></div></center>
+					<div style="align-self: center;" class="g-recaptcha" data-sitekey="6LcnoQ0TAAAAAGWoOB8lbdMxh8FzDlB_mXCbF4xZ"></div></center>
 					<button class="btn btn-lg btn-default btn-block" type="submit">Apply</button>
 				  </form>';
 			} else {
@@ -59,14 +50,13 @@ $recaptcha = getReCaptcha();
 				if ($resp->isSuccess()) {
 					// good its not a bot and stuff now we go ahead and register them
 					//register();
-					if(!validateAccount($_POST['username'], $_POST['phone'])){
-
-						echo 'Username or phone number already taken!<br /><a href="register" class="btn btn-lg btn-default">Try Again</a>';
+					if(!validateAccount($_POST['username'], $_POST['email'], $_POST['phone'])){
+						echo 'Username or email already taken!<br /><a href="register" class="btn btn-lg btn-default">Try Again</a>';
 					} else {
 						echo '...';
-						doRegister($_POST['username'], $_POST['first'], $_POST['last'], $_POST['password'], $_POST['phone'], $_POST['carrier']);
+						doRegister($_POST['username'], $_POST['first'], $_POST['last'], $_POST['password'], $_POST['email'], $_POST['phone']);
                         doLogin($_POST['username'], $_POST['password']);
-						echo '<br />Done!<br />...<br />Now loading Assassin Terminals...<meta http-equiv="refresh" content="3; url=http://spoonassassin.com/" />';
+						echo '<br />Done!<br />...<br />Now loading Assassin Terminal...<meta http-equiv="refresh" content="3; url=/terminal" />';
 					}
 
 
@@ -84,8 +74,7 @@ $recaptcha = getReCaptcha();
             </div>
 
           </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-  </body>
-</html>
+ </body>
+  <?php
+  include "backend/footer.php";
+  ?>

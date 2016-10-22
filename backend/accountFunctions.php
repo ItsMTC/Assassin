@@ -1,28 +1,39 @@
 <?php
 
-function validateAccount($username, $phone){
+function validateAccount($username, $email, $phone){
 	$username = SQLValue($username);
-	$phone = SQLValue($phone);
-    if(!is_numeric($phone)){
+	$email = SQLValue($email);
+    $phone = SQLValue($phone);
+    if(strpos($email, "@") !== false){
         return false;
     }
-if(mysqli_num_rows(query("SELECT username FROM users WHERE username='".$username."' OR phone='".$phone."'")) > 0){
+if(mysqli_num_rows(query("SELECT username FROM users WHERE username='{$username}' OR email='{$email}' OR phone='{$phone}'")) > 0){
 	return false;
 } else {
 	return true;
 }
 }
 
-function getPrettyUsername($username){
-    $user = getUserRow($username);
+function getPrettyUsername($userid){
+    $user = getUserRow($userid);
     if(!empty($user))
         return $user["username"];
-    return $username;
+    return $userid;
 }
 
-function getUserRow($username){
-    $username = SQLValue($username);
-    $res = query("SELECT username FROM users WHERE username='".$username."'");
+function getUserID($token){
+    $token = SQLValue($token);
+    $raw = query("SELECT userid FROM logintokens WHERE token='{$token}'");
+    if(mysqli_num_rows($raw) > 0){
+        $row = mysqli_fetch_assoc($raw);
+        return $row['userid'];
+    }
+    return "";
+}
+
+function getUserRow($userid){
+    $userid = SQLValue($userid);
+    $res = query("SELECT * FROM users WHERE id='".$userid."'");
     if(mysqli_num_rows($res) > 0){
         $row = mysqli_fetch_assoc($res);
         return $row;
@@ -30,14 +41,15 @@ function getUserRow($username){
     return array();
 }
 
-function doRegister($username, $first, $last, $password, $phone, $carrier){
+function doRegister($username, $first, $last, $password, $email, $phone){
 	$username = SQLValue($username);
 	$first = SQLValue($first);
 	$last = SQLValue($last);
+    $email = SQLValue($email);
     $phone = SQLValue($phone);
-    $carrier = SQLValue($carrier);
-	$password = hash("sha256", $password);
-	query("INSERT INTO users (username, password, first, last, phone, carrier) VALUES ('".$username."','".$password."','".$first."','".$last."','".$phone."','".$carrier."')");
+    $salt = generateString(8);
+	$password = hash("sha256", $password.$salt);
+	query("INSERT INTO users (username, password, salt, email, first, last, phone, verified) VALUES ('{$username}','{$password}','{$salt}','{$email}','{$first}','{$last}','{$phone}','0')");
 }
 
 function doLogin($username, $password){
@@ -46,31 +58,34 @@ function doLogin($username, $password){
         return false;
     }
     $res = explode("|", $res);
-    $_SESSION["username"] = $res[0];
-    $_SESSION["publictok"] = $res[1];
-    $_SESSION["privatetok"] = $res[2];
+    $_SESSION["id"] = $res[0];
+    $_SESSION["username"] = $res[1];
+    $_SESSION["token"] = $res[2];
     $_SESSION["firstname"] = $res[3];
     $_SESSION["lastname"] = $res[4];
     return true;
 }
 
 function doLogout(){
+    unset($_SESSION["id"]);
     unset($_SESSION["username"]);
-    unset($_SESSION["publictok"]);
-    unset($_SESSION["privatetok"]);
+    unset($_SESSION["token"]);
     unset($_SESSION["firstname"]);
     unset($_SESSION["lastname"]);
 }
 
 function doLoginBackend($username, $password){
 	$username = SQLValue($username);
-	$password = hash("sha256", $password);
-	$raw = query("SELECT username, first, last FROM users WHERE username='".$username."' AND password='".$password."'");
+    $salt = getUserRow($username)["salt"];
+    $password = hash("sha256", $password.$salt);
+
+	$raw = query("SELECT id, username, first, last FROM users WHERE username='{$username}' OR email='{$username}' AND password='{$password}'");
 	if(mysqli_num_rows($raw) > 0){
-		$username = getPrettyUsername($username);
-		$tokens = generateNewTokens($username);
-		$res = mysqli_fetch_assoc($raw);
-		return $username.'|'.$tokens[0].'|'.$tokens[1].'|'.$res["first"].'|'.$res["last"];
+        $res = mysqli_fetch_assoc($raw);
+        $userid = $res['id'];
+		$username = $res['username'];
+		$token = generateNewToken($userid);
+		return $userid.'|'.$username.'|'.$token.'|'.$res["first"].'|'.$res["last"];
 	} else {
 		return false;
 	}
@@ -81,60 +96,52 @@ function getTargetRaw($token){
 	return "No Target Detected|--|--|--";
 }
 
-function getName($username){
-    $user = getUserRow($username);
+function getName($userid){
+    $user = getUserRow($userid);
     if(!empty($user))
         return array($user["first"], $user["last"]);
     return array("NOT", "DEFINED");
 }
 
-function verifyToken($private){
-	$private = SQLValue($private);
-	if(mysqli_num_rows(query("SELECT username FROM logintokens WHERE private='".$private."'")) > 0){
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function verifyTokens($public, $private){
-	$private = SQLValue($private);
-	$public = SQLValue($public);
-	if(mysqli_num_rows(query("SELECT username FROM logintokens WHERE private='".$private."' OR public='".$public."'")) > 0){
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function verifyVerification($token){
+function verifyToken($token){
 	$token = SQLValue($token);
-	if(mysqli_num_rows(query("SELECT username FROM verification WHERE token='{$token}'")) > 0){
+	if(mysqli_num_rows(query("SELECT userid FROM logintokens WHERE token='".$token."'")) > 0){
 		return true;
 	} else {
 		return false;
 	}
 }
 
-function generateNewTokens($username){
-	$private = generateString(20);
-	$public = generateString(20);
-	query("DELETE FROM logintokens WHERE username='".$username."'");
-	if(!verifyTokens($public, $private)){
-		query("INSERT INTO logintokens (username, public, private) VALUES ('".$username."','".$public."','".$private."')");
+function verifyVerification($userid, $token){
+	$token = SQLValue($token);
+	if(mysqli_num_rows(query("SELECT userid FROM verification WHERE token='{$token}' AND userid='{$userid}'")) > 0){
+		return true;
 	} else {
-		return generateNewTokens($username);
+		return false;
 	}
-	return array($public, $private);
 }
 
-function generateNewVerification($username){
-	$token = SQLValue(generateNum(5));
-	query("DELETE FROM verification WHERE username='".$username."'");
-	if(!verifyVerification($token)){
-		query("INSERT INTO verification (username, address, token) VALUES ('".$username."','".getCommString($username)."','".$token."')");
+function generateNewToken($userid){
+	$private = generateString(20);
+    $userid = SQLValue($userid);
+	query("DELETE FROM logintokens WHERE userid='".$userid."'");
+	if(!verifyToken($private)){
+		query("INSERT INTO logintokens (userid, token) VALUES ('{$userid}','{$private}')");
 	} else {
-		return generateNewVerification($username);
+		return generateNewToken($userid);
+	}
+	return $private;
+}
+
+function generateNewVerification($userid, $email){
+	$token = SQLValue(generateNum(5));
+    $userid = SQLValue($userid);
+    $email = SQLValue($email);
+	query("DELETE FROM verification WHERE userid='".$userid."'");
+	if(!verifyVerification($userid, $token)){
+		query("INSERT INTO verification (userid, email, token) VALUES ('{$userid}','{$email}','{$token}')");
+	} else {
+		return generateNewVerification($userid);
 	}
 	return $token;
 }

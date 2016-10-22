@@ -35,12 +35,9 @@ $recaptcha = getReCaptcha();
                 if(!isset($_POST['g-recaptcha-response'])){
                     echo '
                   <h3 class="cover-heading">Login to the Assassin Terminal</h3>
-                  <p class="lead">Enter your username and password</p>
+                  <p class="lead">Enter your username/email and password</p>
                   <form name="login" action="login" data-toggle="validator" method="post">
-					<div class="input-group">
-						<span class="input-group-addon" id="username" name="username">@</span>
-						<input type="text" class="form-control" maxlength="20" required placeholder="Asset Tag" name="username" id="username" aria-describedby="username">
-					</div>
+					<input type="text" class="form-control" maxlength="20" required placeholder="Username" name="username" id="username" aria-describedby="username">
 					<input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
 					<center><div class="g-recaptcha" data-sitekey="6LcnoQ0TAAAAAGWoOB8lbdMxh8FzDlB_mXCbF4xZ"></div></center>
 					<button class="btn btn-lg btn-default btn-block" type="submit">Login</button>
@@ -54,12 +51,8 @@ $recaptcha = getReCaptcha();
                             echo 'Username or password incorrect!<br /><a href="login" class="btn btn-lg btn-default">Try Again</a>';
                         } else {
                             echo '...';
-                            echo '<br />Done!<br />...<br />Now loading Assassin Terminals...<meta http-equiv="refresh" content="3; url=http://spoonassassin.com/" />';
+                            echo '<br />Done!<br />...<br />Now loading Assassin Terminal...<meta http-equiv="refresh" content="3; url=/terminal" />';
                         }
-
-
-
-
                     } else {
                         $errors = $resp->getErrorCodes();
                         echo '<a href="login" class="btn btn-lg btn-default">Try Again</a>';
@@ -72,8 +65,7 @@ $recaptcha = getReCaptcha();
     </div>
 
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="js/bootstrap.min.js"></script>
-</body>
-</html>
+    </body>
+<?php
+include "backend/footer.php";
+?>

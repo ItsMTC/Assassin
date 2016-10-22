@@ -60,8 +60,8 @@ function sendRawText($number, $carrier, $text){
     //gmail($number.getCarrierString($carrier), $text);
 }
 
-function getCommString($username){
-    $user = getUserRow($username);
+function getCommString($id){
+    $user = getUserRow($id);
     if(!empty($user))
         return $user["phone"].getCarrierString($user["carrier"]);
     return "";
