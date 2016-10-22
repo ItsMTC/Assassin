@@ -42,7 +42,7 @@ $recaptcha = getReCaptcha();
 					<input type="text" class="form-control" id="first" name="first" placeholder="First Name" required maxlength="50">
 					<input type="text" class="form-control" id="last" name="last" placeholder="Last Name" required maxlength="50">
 					<input type="text" class="form-control" id="phone" name="phone" placeholder="5555555555" required maxlength="10">
-					<div style="align-self: center;" class="g-recaptcha" data-sitekey="6LcnoQ0TAAAAAGWoOB8lbdMxh8FzDlB_mXCbF4xZ"></div></center>
+					<center><div class="g-recaptcha" data-sitekey="6LcnoQ0TAAAAAGWoOB8lbdMxh8FzDlB_mXCbF4xZ"></div></center>
 					<button class="btn btn-lg btn-default btn-block" type="submit">Apply</button>
 				  </form>';
 			} else {

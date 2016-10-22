@@ -4,7 +4,7 @@ function validateAccount($username, $email, $phone){
 	$username = SQLValue($username);
 	$email = SQLValue($email);
     $phone = SQLValue($phone);
-    if(strpos($email, "@") !== false){
+    if(strpos($email, "@") === false){
         return false;
     }
 if(mysqli_num_rows(query("SELECT username FROM users WHERE username='{$username}' OR email='{$email}' OR phone='{$phone}'")) > 0){
