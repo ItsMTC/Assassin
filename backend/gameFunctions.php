@@ -1,7 +1,5 @@
 <?php
 
-include("./globalFunctions.php");
-
 function getTag($privatetoken){
   $privatetoken = SQLValue($privatetoken);
   $raw = query("SELECT username FROM logintokens WHERE private='".$privatetoken."'");

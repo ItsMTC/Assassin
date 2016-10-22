@@ -1,5 +1,4 @@
 <?php
-include dirname(__FILE__)."/globalFunctions.php";
 
 function validateAccount($username, $phone){
 	$username = SQLValue($username);
